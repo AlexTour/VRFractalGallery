@@ -26,6 +26,8 @@
     <a-scene>
       <a-assets>
         <img id="city" crossorigin="anonymous" src="Assets/Reichstag Plenarsaal.jpg">
+        <img id="calabriabnw" crossorigin="anonymous" src="Assets/calabriabnw.jpg">
+        
         <img id="city-thumb" crossorigin="anonymous" src="Assets/infobox@2x.jpg">
 
         <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
@@ -41,6 +43,7 @@
       <!-- Image links. -->
       <a-entity id="links" layout="type: line; margin: 1.5" position="0 -1 -4">
         <a-entity template="src: #link" data-src="#city" data-thumb="#city-thumb"></a-entity>
+        <a-entity template="src: #link" data-src="#calabriabnw" data-thumb="#city-thumb"></a-entity>
       </a-entity>
 
       <!-- Camera + cursor. -->
