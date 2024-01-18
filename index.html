@@ -25,8 +25,11 @@
   <body>
     <a-scene>
       <a-assets>
-        <img id="city" crossorigin="anonymous" src="Assets/Reichstag Plenarsaal.jpg">
         <img id="calabriabnw" crossorigin="anonymous" src="Assets/calabriabnw.jpg">
+        <img id="architect" crossorigin="anonymous" src="Assets/architect.jpg">
+        <img id="architect2" crossorigin="anonymous" src="Assets/architect2.jpg">
+        <img id="purple" crossorigin="anonymous" src="Assets/citypurple.jpg">
+        <img id="miraduro" crossorigin="anonymous" src="Assets/miraduro.jpg">
         
         <img id="city-thumb" crossorigin="anonymous" src="Assets/infobox@2x.jpg">
 
@@ -36,14 +39,17 @@
       </a-assets>
 
       <!-- 360-degree image. -->
-      <a-sky id="image-360" radius="10" src="#city"
+      <a-sky id="image-360" radius="10" src="#architect"
              animation__fade="property: components.material.material.color; type: color; from: #FFF; to: #000; dur: 300; startEvents: fade"
              animation__fadeback="property: components.material.material.color; type: color; from: #000; to: #FFF; dur: 300; startEvents: animationcomplete__fade"></a-sky>
 
       <!-- Image links. -->
       <a-entity id="links" layout="type: line; margin: 1.5" position="0 -1 -4">
-        <a-entity template="src: #link" data-src="#city" data-thumb="#city-thumb"></a-entity>
+        <a-entity template="src: #link" data-src="#architect" data-thumb="#city-thumb"></a-entity>
+        <a-entity template="src: #link" data-src="#architect2" data-thumb="#city-thumb"></a-entity>
+        <a-entity template="src: #link" data-src="#citypurple" data-thumb="#city-thumb"></a-entity>
         <a-entity template="src: #link" data-src="#calabriabnw" data-thumb="#city-thumb"></a-entity>
+        <a-entity template="src: #link" data-src="#calabriabnw" data-thumb="#-thumb"></a-entity>
       </a-entity>
 
       <!-- Camera + cursor. -->
