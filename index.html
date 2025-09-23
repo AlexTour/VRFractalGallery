@@ -5,102 +5,114 @@
     <title>Fractal Cosmos: a VR Gallery</title>
     <meta name="description" content="Fractal Cosmos: a VR Gallery">
 
-    <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="https://alextour.github.io/VRFractalGallery/">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Fractal Cosmos: a VR Gallery">
-    <meta property="og:description" content="Explore Fractals like never before.">
-    <meta property="og:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
-
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="alextour.github.io">
-    <meta property="twitter:url" content="https://alextour.github.io/VRFractalGallery/">
-    <meta name="twitter:title" content="Fractal Cosmos: a VR Gallery">
-    <meta name="twitter:description" content="Explore Fractals like never before.">
-    <meta name="twitter:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
-
-    
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-event-set-component@5/dist/aframe-event-set-component.min.js"></script>
     <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
     <script src="https://unpkg.com/aframe-template-component@3.2.1/dist/aframe-template-component.min.js"></script>
     <script src="https://unpkg.com/aframe-proxy-event-component@2.1.0/dist/aframe-proxy-event-component.min.js"></script>
-    
-    <!-- Image link template to be reused. -->
-    <script id="link" type="text/html">
-      <a-entity class="link"
-        geometry="primitive: plane; height: 0.5; width: 0.5"
-        material="src: ${thumb}"
-        transparent: true
-        opacity: 0.9
-        alpha-test: 0.5
 
-        event-set__mouseenter="scale: 1.2 1.2 1"
-        event-set__mouseleave="scale: 1 1 1"
-        event-set__click="_target: #image-360; _delay: 300; material.src: ${src}"
-        proxy-event="event: click; to: #image-360; as: fade"
-        sound="on: click; src: #click-sound"></a-entity>
+    <style>
+      /* Fullscreen GIF loader */
+      #loader {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: black url("output_prRz0G.gif") center center no-repeat;
+        background-size: cover;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 1.2s ease; /* smooth fade */
+      }
+      #loader.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+    </style>
+
+    <script>
+      // Audio toggle system
+      AFRAME.registerComponent('scene-audio', {
+        init: function () {
+          this.audio1 = document.querySelector('#audio1');
+          this.audio2 = document.querySelector('#audio2');
+          this.current = null;
+
+          this.el.addEventListener('set-scene-audio', e => {
+            let choice = e.detail.track;
+            if (choice === 1) {
+              this.playAudio(this.audio1);
+            } else {
+              this.playAudio(this.audio2);
+            }
+          });
+        },
+        playAudio: function (audioEl) {
+          if (this.current && this.current !== audioEl) {
+            this.current.pause();
+            this.current.currentTime = 0;
+          }
+          this.current = audioEl;
+          if (this.current.paused) {
+            this.current.play();
+          }
+        }
+      });
+
+      // Map thumbnail click → audio change
+      AFRAME.registerComponent('link-audio', {
+        schema: { track: { type: 'int', default: 1 } },
+        init: function () {
+          this.el.addEventListener('click', () => {
+            let sceneEl = document.querySelector('a-scene');
+            sceneEl.emit('set-scene-audio', { track: this.data.track });
+          });
+        }
+      });
+
+      // Hide loader when scene is ready with fade-out
+      window.addEventListener('load', () => {
+        let sceneEl = document.querySelector('a-scene');
+        sceneEl.addEventListener('loaded', () => {
+          let loader = document.getElementById('loader');
+          loader.classList.add('fade-out');
+          setTimeout(() => { loader.style.display = 'none'; }, 1500); // remove after fade
+        });
+      });
     </script>
   </head>
   <body>
-    <a-scene loading-screen="backgroundColor: black;">
+    <!-- GIF Loader Overlay -->
+    <div id="loader"></div>
+
+    <a-scene scene-audio>
       <a-assets>
-        <img id="calabriabnw" crossorigin="anonymous" src="Assets/calabriabnw.jpg">
-        <img id="architect" crossorigin="anonymous" src="Assets/architect.jpg">
-        <img id="architect2" crossorigin="anonymous" src="Assets/architect2.jpg">
-        <img id="citypurple" crossorigin="anonymous" src="Assets/citypurple.jpg">
-        <img id="miraduro" crossorigin="anonymous" src="Assets/miraduro.jpg">
-        <img id="aquarium" crossorigin="anonymous" src="Assets/aquarium360REDUCED.jpg">
-        <img id="calabriaColor" crossorigin="anonymous" src="Assets/calabriaREDUCED.jpg">
-        <img id="circus" crossorigin="anonymous" src="Assets/circusREDUCED.jpg">
-        <img id="mindyourtrippy" crossorigin="anonymous" src="Assets/mindyourtrippy360REDUCED.jpg">
-        <img id="pinkturqouise" crossorigin="anonymous" src="Assets/pinkturqouiseREDUCED.jpg">
+        <!-- 360 images -->
+        <img id="architect" src="Assets/architect.jpg">
+        <img id="architect2" src="Assets/architect2.jpg">
+        <img id="citypurple" src="Assets/citypurple.jpg">
 
-        <img id="thumb-calabriabnw" crossorigin="anonymous" src="Assets/thumb-calabriabnw.png">
-        <img id="thumb-architect" crossorigin="anonymous" src="Assets/thumb-architect.png">
-        <img id="thumb-architect2" crossorigin="anonymous" src="Assets/thumb-architect2.png">
-        <img id="thumb-citypurple" crossorigin="anonymous" src="Assets/thumb-citypurple.png">
-        <img id="thumb-miraduro" crossorigin="anonymous" src="Assets/thumb-miraduro.png">
-        <img id="thumb-aquarium" crossorigin="anonymous" src="Assets/thumb-aquarium.png">
-        <img id="thumb-calabria" crossorigin="anonymous" src="Assets/thumb-calabria.png">
-        <img id="thumb-circus" crossorigin="anonymous" src="Assets/thumb-circus.png">
-        <img id="thumb-mindyourtrippy" crossorigin="anonymous" src="Assets/thumb-mindyourtrippy.png">
-        <img id="thumb-pinkturqouise" crossorigin="anonymous" src="Assets/thumb-pinkturqouise.png"> 
-
-        
-        <img id="city-thumb" crossorigin="anonymous" src="Assets/infobox@2x.jpg">
-
-        <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
-
-
+        <!-- Audio -->
+        <audio id="audio1" src="NeoGreenChamber.wav" preload="auto" loop crossorigin="anonymous"></audio>
+        <audio id="audio2" src="PristineAtrium.wav" preload="auto" loop crossorigin="anonymous"></audio>
       </a-assets>
 
-      <!-- 360-degree image. -->
-      <a-sky id="image-360" radius="10" src="#architect"
-             animation__fade="property: components.material.material.color; type: color; from: #FFF; to: #000; dur: 300; startEvents: fade"
-             animation__fadeback="property: components.material.material.color; type: color; from: #000; to: #FFF; dur: 300; startEvents: animationcomplete__fade"></a-sky>
+      <!-- Default 360 -->
+      <a-sky id="image-360" radius="10" src="#architect"></a-sky>
 
+      <!-- Thumbnails with audio mapping -->
       <a-entity id="links" position="0 -1 -3">
-        <a-entity template="src: #link" data-src="#architect" data-thumb="#thumb-architect" position="-1.5 1 0"></a-entity>
-        <a-entity template="src: #link" data-src="#architect2" data-thumb="#thumb-architect2" position="-0.75 1 0"></a-entity>
-        <a-entity template="src: #link" data-src="#citypurple" data-thumb="#thumb-citypurple" position="0 1 0"></a-entity>
-        <a-entity template="src: #link" data-src="#calabriabnw" data-thumb="#thumb-calabriabnw" position="0.75 1 0"></a-entity>
-        <a-entity template="src: #link" data-src="#miraduro" data-thumb="#thumb-miraduro" position="1.5 1 0"></a-entity>
-
-        <a-entity template="src: #link" data-src="#aquarium" data-thumb="#thumb-aquarium" position="-1.5 0.25 0"></a-entity>
-        <a-entity template="src: #link" data-src="#calabriaColor" data-thumb="#thumb-calabria" position="-0.75 0.25 0"></a-entity>
-        <a-entity template="src: #link" data-src="#circus" data-thumb="#thumb-circus" position="0 0.25 0"></a-entity>
-        <a-entity template="src: #link" data-src="#mindyourtrippy" data-thumb="#thumb-mindyourtrippy" position="0.75 0.25 0"></a-entity>
-        <a-entity template="src: #link" data-src="#pinkturqouise" data-thumb="#thumb-pinkturqouise" position="1.5 0.25 0"></a-entity>
+        <a-entity template="src: #link" data-src="#architect" data-thumb="#thumb-architect"
+                  position="-1.5 1 0" link-audio="track: 1"></a-entity>
+        <a-entity template="src: #link" data-src="#architect2" data-thumb="#thumb-architect2"
+                  position="0 1 0" link-audio="track: 2"></a-entity>
+        <a-entity template="src: #link" data-src="#citypurple" data-thumb="#thumb-citypurple"
+                  position="1.5 1 0" link-audio="track: 1"></a-entity>
       </a-entity>
 
-      <!-- Camera + cursor. -->
+      <!-- Camera -->
       <a-entity camera look-controls>
-        <a-cursor
-          id="cursor"
+        <a-cursor id="cursor"
           animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
-          animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
           event-set__mouseenter="_event: mouseenter; color: springgreen"
           event-set__mouseleave="_event: mouseleave; color: black"
           raycaster="objects: .link"></a-cursor>
