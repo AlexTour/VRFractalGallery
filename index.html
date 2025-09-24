@@ -4,6 +4,21 @@
   <meta charset="utf-8">
   <title>Fractal Cosmos: a VR Gallery</title>
   <meta name="description" content="Fractal Cosmos: a VR Gallery">
+   <!-- Facebook Meta Tags -->
+    <meta property="og:url" content="https://alextour.github.io/VRFractalGallery/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Fractal Cosmos: a VR Gallery">
+    <meta property="og:description" content="Explore Fractals like never before.">
+    <meta property="og:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
+
+    <!-- Twitter Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="alextour.github.io">
+    <meta property="twitter:url" content="https://alextour.github.io/VRFractalGallery/">
+    <meta name="twitter:title" content="Fractal Cosmos: a VR Gallery">
+    <meta name="twitter:description" content="Explore Fractals like never before.">
+    <meta name="twitter:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
+  
   <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-event-set-component@5/dist/aframe-event-set-component.min.js"></script>
   <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
@@ -75,6 +90,7 @@
       <img id="thumb-pinkturqouise" crossorigin="anonymous" src="Assets/thumb-pinkturqouise.png">
       <!-- Poster -->
       <img id="posterA" crossorigin="anonymous" src="Assets/posterA.jpg">
+      <img id="city-thumb" crossorigin="anonymous" src="Assets/infobox@2x.jpg">
       <!-- Audio -->
       <audio id="bgAudio" src="Assets/NeoGreenChamber.mp3" preload="auto" loop></audio>
       <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
@@ -88,14 +104,23 @@
       <a-entity template="src: #link" data-src="#citypurple" data-thumb="#thumb-citypurple" position="0 1 0"></a-entity>
       <a-entity template="src: #link" data-src="#calabriabnw" data-thumb="#thumb-calabriabnw" position="0.75 1 0"></a-entity>
       <a-entity template="src: #link" data-src="#miraduro" data-thumb="#thumb-miraduro" position="1.5 1 0"></a-entity>
+      <a-entity template="src: #link" data-src="#aquarium" data-thumb="#thumb-aquarium" position="-1.5 0.25 0"></a-entity>
+      <a-entity template="src: #link" data-src="#calabriaColor" data-thumb="#thumb-calabria" position="-0.75 0.25 0"></a-entity>
+      <a-entity template="src: #link" data-src="#circus" data-thumb="#thumb-circus" position="0 0.25 0"></a-entity>
+      <a-entity template="src: #link" data-src="#mindyourtrippy" data-thumb="#thumb-mindyourtrippy" position="0.75 0.25 0"></a-entity>
+      <a-entity template="src: #link" data-src="#pinkturqouise" data-thumb="#thumb-pinkturqouise" position="1.5 0.25 0"></a-entity>
     </a-entity>
+     <!-- Camera + cursor. -->
     <a-entity camera look-controls>
-      <a-cursor id="cursor"
-                animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
-                event-set__mouseenter="_event: mouseenter; color: springgreen"
-                event-set__mouseleave="_event: mouseleave; color: black"
-                raycaster="objects: .link"></a-cursor>
+      <a-cursor
+        id="cursor"
+        animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
+        animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+        event-set__mouseenter="_event: mouseenter; color: springgreen"
+        event-set__mouseleave="_event: mouseleave; color: black"
+        raycaster="objects: .link"></a-cursor>
     </a-entity>
+
   </a-scene>
   <script>
     window.addEventListener("load", () => {
