@@ -83,8 +83,7 @@
       <img id="posterA" crossorigin="anonymous" src="Assets/posterA.jpg">
 
       <!-- Audio -->
-      <audio id="audio1" src="Assets/NeoGreenChamber.wav" preload="auto" crossorigin="anonymous"></audio>
-      <audio id="audio2" src="Assets/PristineAtrium.wav" preload="auto" crossorigin="anonymous"></audio>
+      <audio id="audio1" src="Assets/NeoGreenChamber.mp3" preload="auto"></audio>
 
       <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
     </a-assets>
@@ -92,12 +91,19 @@
     <a-sky id="image-360" radius="10" src="#architect"></a-sky>
 
     <a-entity id="links" position="0 -1 -3">
-      <a-entity template="src: #link" data-src="#architect" data-thumb="#thumb-architect" position="-1.5 1 0"></a-entity>
-      <a-entity template="src: #link" data-src="#architect2" data-thumb="#thumb-architect2" position="-0.75 1 0"></a-entity>
-      <a-entity template="src: #link" data-src="#citypurple" data-thumb="#thumb-citypurple" position="0 1 0"></a-entity>
-      <a-entity template="src: #link" data-src="#calabriabnw" data-thumb="#thumb-calabriabnw" position="0.75 1 0"></a-entity>
-      <a-entity template="src: #link" data-src="#miraduro" data-thumb="#thumb-miraduro" position="1.5 1 0"></a-entity>
+        <a-entity template="src: #link" data-src="#architect" data-thumb="#thumb-architect" position="-1.5 1 0"></a-entity>
+        <a-entity template="src: #link" data-src="#architect2" data-thumb="#thumb-architect2" position="-0.75 1 0"></a-entity>
+        <a-entity template="src: #link" data-src="#citypurple" data-thumb="#thumb-citypurple" position="0 1 0"></a-entity>
+        <a-entity template="src: #link" data-src="#calabriabnw" data-thumb="#thumb-calabriabnw" position="0.75 1 0"></a-entity>
+        <a-entity template="src: #link" data-src="#miraduro" data-thumb="#thumb-miraduro" position="1.5 1 0"></a-entity>
+
+        <a-entity template="src: #link" data-src="#aquarium" data-thumb="#thumb-aquarium" position="-1.5 0.25 0"></a-entity>
+        <a-entity template="src: #link" data-src="#calabriaColor" data-thumb="#thumb-calabria" position="-0.75 0.25 0"></a-entity>
+        <a-entity template="src: #link" data-src="#circus" data-thumb="#thumb-circus" position="0 0.25 0"></a-entity>
+        <a-entity template="src: #link" data-src="#mindyourtrippy" data-thumb="#thumb-mindyourtrippy" position="0.75 0.25 0"></a-entity>
+        <a-entity template="src: #link" data-src="#pinkturqouise" data-thumb="#thumb-pinkturqouise" position="1.5 0.25 0"></a-entity>
     </a-entity>
+
 
     <a-entity camera look-controls>
       <a-cursor id="cursor"
@@ -113,26 +119,15 @@
       const overlay = document.getElementById("overlay");
       const btn = document.getElementById("enterBtn");
       const audio1 = document.getElementById("audio1");
-      const audio2 = document.getElementById("audio2");
-
-      function playSequentialLoop() {
-        audio1.play().then(() => {
-          audio1.onended = () => {
-            audio2.play().then(() => {
-              audio2.onended = () => {
-                // Loop back to start
-                playSequentialLoop();
-              };
-            }).catch(err => console.log("Audio2 playback failed:", err));
-          };
-        }).catch(err => console.log("Audio1 playback failed:", err));
-      }
 
       btn.addEventListener("click", () => {
         overlay.classList.add("hidden");
         setTimeout(() => { overlay.style.display = "none"; }, 1000);
 
-        playSequentialLoop();
+        // Play the single audio and loop
+        audio1.loop = true;
+        audio1.volume = 0.7;
+        audio1.play().catch(err => console.log("Audio playback failed:", err));
       });
     });
   </script>
