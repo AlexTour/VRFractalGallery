@@ -1,51 +1,125 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <title>Fractal Cosmos: a VR Gallery</title>
     <meta name="description" content="Fractal Cosmos: a VR Gallery">
 
-    <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="https://alextour.github.io/VRFractalGallery/">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Fractal Cosmos: a VR Gallery">
-    <meta property="og:description" content="Explore Fractals like never before.">
-    <meta property="og:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
-
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="alextour.github.io">
-    <meta property="twitter:url" content="https://alextour.github.io/VRFractalGallery/">
-    <meta name="twitter:title" content="Fractal Cosmos: a VR Gallery">
-    <meta name="twitter:description" content="Explore Fractals like never before.">
-    <meta name="twitter:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
-
-    
+    <!-- A-Frame + helper components -->
     <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-event-set-component@5/dist/aframe-event-set-component.min.js"></script>
     <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
     <script src="https://unpkg.com/aframe-template-component@3.2.1/dist/aframe-template-component.min.js"></script>
     <script src="https://unpkg.com/aframe-proxy-event-component@2.1.0/dist/aframe-proxy-event-component.min.js"></script>
-    
+
     <!-- Image link template to be reused. -->
     <script id="link" type="text/html">
       <a-entity class="link"
         geometry="primitive: plane; height: 0.5; width: 0.5"
         material="src: ${thumb}"
-        transparent: true
-        opacity: 0.9
-        alpha-test: 0.5
-
+        transparent="true"
+        opacity="0.9"
+        alpha-test="0.5"
         event-set__mouseenter="scale: 1.2 1.2 1"
         event-set__mouseleave="scale: 1 1 1"
         event-set__click="_target: #image-360; _delay: 300; material.src: ${src}"
         proxy-event="event: click; to: #image-360; as: fade"
         sound="on: click; src: #click-sound"></a-entity>
     </script>
+
+    <style>
+      /* Fullscreen GIF loader (covers entire viewport while loading) */
+      #loader {
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: black center center no-repeat;
+        background-size: cover;
+        z-index: 9999;
+        opacity: 1;
+        transition: opacity 1.2s ease;
+        display: block;
+        pointer-events: auto;
+      }
+      #loader.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* Headphones advisory modal */
+      #headphone-modal {
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 10001;
+        background: rgba(0,0,0,0.9);
+        color: #fff;
+        padding: 24px 28px;
+        border-radius: 8px;
+        max-width: 90%;
+        width: 420px;
+        text-align: center;
+        display: none; /* shown after loader */
+        box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        font-family: sans-serif;
+      }
+      #headphone-modal h2 { margin: 0 0 8px; font-size: 1.15rem; }
+      #headphone-modal p { margin: 8px 0 16px; font-size: 0.95rem; line-height: 1.3; color: #ddd; }
+      #headphone-modal button {
+        background: #1db954;
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        font-size: 1rem;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      #headphone-modal button.secondary {
+        background: transparent;
+        border: 1px solid #555;
+        margin-left: 8px;
+      }
+
+      /* small fallback message for audio failures */
+      #audio-fallback {
+        position: fixed;
+        left: 50%;
+        bottom: 24px;
+        transform: translateX(-50%);
+        z-index: 10002;
+        background: rgba(0,0,0,0.8);
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 6px;
+        display: none;
+        font-family: sans-serif;
+      }
+    </style>
   </head>
+
   <body>
+    <!-- Loader overlay (uses the gif file as background). The image is also declared in <a-assets>. -->
+    <div id="loader" style="background-image: url('Assets/output_prRz0G.gif');"></div>
+
+    <!-- Headphones advisory modal -->
+    <div id="headphone-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <h2 id="modal-title">Wear headphones for the best experience</h2>
+      <p>Fractal Cosmos uses layered ambisonic/ambient audio — headphones will give you depth and clarity.<br><br>Click <strong>Next</strong> when you're ready.</p>
+      <div>
+        <button id="next-btn">Next</button>
+        <button id="skip-btn" class="secondary">Skip audio</button>
+      </div>
+    </div>
+
+    <div id="audio-fallback">Audio blocked — tap anywhere to enable sound.</div>
+
     <a-scene loading-screen="backgroundColor: black;">
       <a-assets>
+        <!-- GIF loader included as an asset so scene waits for it -->
+        <img id="loader-gif" src="Assets/output_prRz0G.gif" crossorigin="anonymous">
+
+        <!-- 360 images -->
         <img id="calabriabnw" crossorigin="anonymous" src="Assets/calabriabnw.jpg">
         <img id="architect" crossorigin="anonymous" src="Assets/architect.jpg">
         <img id="architect2" crossorigin="anonymous" src="Assets/architect2.jpg">
@@ -57,6 +131,7 @@
         <img id="mindyourtrippy" crossorigin="anonymous" src="Assets/mindyourtrippy360REDUCED.jpg">
         <img id="pinkturqouise" crossorigin="anonymous" src="Assets/pinkturqouiseREDUCED.jpg">
 
+        <!-- Thumbs -->
         <img id="thumb-calabriabnw" crossorigin="anonymous" src="Assets/thumb-calabriabnw.png">
         <img id="thumb-architect" crossorigin="anonymous" src="Assets/thumb-architect.png">
         <img id="thumb-architect2" crossorigin="anonymous" src="Assets/thumb-architect2.png">
@@ -66,14 +141,16 @@
         <img id="thumb-calabria" crossorigin="anonymous" src="Assets/thumb-calabria.png">
         <img id="thumb-circus" crossorigin="anonymous" src="Assets/thumb-circus.png">
         <img id="thumb-mindyourtrippy" crossorigin="anonymous" src="Assets/thumb-mindyourtrippy.png">
-        <img id="thumb-pinkturqouise" crossorigin="anonymous" src="Assets/thumb-pinkturqouise.png"> 
+        <img id="thumb-pinkturqouise" crossorigin="anonymous" src="Assets/thumb-pinkturqouise.png">
 
-        
         <img id="city-thumb" crossorigin="anonymous" src="Assets/infobox@2x.jpg">
 
-        <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
+        <!-- Click sound -->
+        <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg" preload="auto"></audio>
 
-
+        <!-- The two audio tracks you asked to play (preload, but NOT autoplay) -->
+        <audio id="audio1" src="Assets/NeoGreenChamber.wav" preload="auto" crossorigin="anonymous"></audio>
+        <audio id="audio2" src="Assets/PristineAtrium.wav" preload="auto" crossorigin="anonymous"></audio>
       </a-assets>
 
       <!-- 360-degree image. -->
@@ -106,6 +183,137 @@
           raycaster="objects: .link"></a-cursor>
       </a-entity>
     </a-scene>
+
+    <script>
+      // Extended scene audio component: can play both tracks (playAll) or switch to one (set-scene-audio)
+      AFRAME.registerComponent('scene-audio', {
+        init: function () {
+          this.audio1 = document.querySelector('#audio1');
+          this.audio2 = document.querySelector('#audio2');
+          this.current = null;
+
+          // respond to events to play single track (keeps compatibility)
+          this.el.addEventListener('set-scene-audio', e => {
+            const choice = e.detail.track;
+            if (choice === 1) {
+              this.playSingle(1);
+            } else if (choice === 2) {
+              this.playSingle(2);
+            }
+          });
+        },
+
+        // Play both audio tracks (used when user clicks Next)
+        playAll: function () {
+          if (!this.audio1 || !this.audio2) return Promise.resolve();
+
+          // ensure loop
+          this.audio1.loop = true;
+          this.audio2.loop = true;
+
+          // attempt to play both; return a Promise that resolves when both play attempts finish (or rejects)
+          const p1 = this.audio1.play();
+          const p2 = this.audio2.play();
+
+          // If either play() returns undefined/non-promise, wrap with resolved Promise
+          const wrap = (p) => (p && typeof p.then === 'function') ? p : Promise.resolve();
+
+          return Promise.all([ wrap(p1), wrap(p2) ])
+            .then(() => {
+              this.current = null; // both playing
+            })
+            .catch(err => {
+              // bubble up for caller to show fallback UI
+              return Promise.reject(err);
+            });
+        },
+
+        // Play a single track and pause the other
+        playSingle: function (track) {
+          if (!this.audio1 || !this.audio2) return;
+          this.audio1.pause();
+          this.audio2.pause();
+          this.audio1.currentTime = 0;
+          this.audio2.currentTime = 0;
+
+          if (track === 1) {
+            this.audio1.loop = true;
+            this.audio1.play().catch(()=>{});
+            this.current = this.audio1;
+          } else {
+            this.audio2.loop = true;
+            this.audio2.play().catch(()=>{});
+            this.current = this.audio2;
+          }
+        },
+
+        pauseAll: function () {
+          if (this.audio1) { this.audio1.pause(); }
+          if (this.audio2) { this.audio2.pause(); }
+        }
+      });
+
+      // Loader & modal logic
+      (function () {
+        const sceneEl = document.querySelector('a-scene');
+        const loader = document.getElementById('loader');
+        const modal = document.getElementById('headphone-modal');
+        const nextBtn = document.getElementById('next-btn');
+        const skipBtn = document.getElementById('skip-btn');
+        const audioFallback = document.getElementById('audio-fallback');
+
+        // Show modal after scene loaded (fade loader out first)
+        sceneEl.addEventListener('loaded', () => {
+          // fade loader
+          loader.classList.add('fade-out');
+          // after fade finishes, hide loader and show modal
+          setTimeout(() => {
+            loader.style.display = 'none';
+            modal.style.display = 'block';
+          }, 1200); // match CSS transition
+        });
+
+        // Helper to attempt to play both audios via the component
+        function startAllAudio() {
+          const comp = sceneEl.components['scene-audio'];
+          if (!comp) return Promise.reject(new Error('scene-audio component not found'));
+          return comp.playAll();
+        }
+
+        // Next button -> start audios (user gesture) and hide modal
+        nextBtn.addEventListener('click', () => {
+          // hide modal immediately
+          modal.style.display = 'none';
+
+          startAllAudio()
+            .catch(err => {
+              console.warn('Audio play rejected:', err);
+              // show fallback message and set up a user-tap to enable audio
+              audioFallback.style.display = 'block';
+              const oneTap = () => {
+                startAllAudio()
+                  .then(()=> { audioFallback.style.display = 'none'; document.body.removeEventListener('click', oneTap); })
+                  .catch(()=>{ /* keep fallback visible */ });
+              };
+              // if first attempt failed, allow user to tap anywhere to retry
+              document.body.addEventListener('click', oneTap);
+            });
+        });
+
+        // Skip audio: just hide modal (user opted out)
+        skipBtn.addEventListener('click', () => {
+          modal.style.display = 'none';
+        });
+
+        // Small safety: if user reloads mid session, ensure the loader background is set from the asset (keeps visual consistent)
+        // Note: not strictly necessary, but ensures mobile browsers show the gif.
+        (function ensureLoaderImage() {
+          const loaderGifAsset = document.querySelector('#loader-gif');
+          if (loaderGifAsset && loaderGifAsset.src) {
+            loader.style.backgroundImage = `url('${loaderGifAsset.src}')`;
+          }
+        })();
+      })();
+    </script>
   </body>
 </html>
-
