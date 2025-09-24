@@ -115,21 +115,39 @@
   </a-scene>
 
   <script>
-    window.addEventListener("load", () => {
-      const overlay = document.getElementById("overlay");
-      const btn = document.getElementById("enterBtn");
-      const audio1 = document.getElementById("audio1");
-
-      btn.addEventListener("click", () => {
-        overlay.classList.add("hidden");
-        setTimeout(() => { overlay.style.display = "none"; }, 1000);
-
-        // Play the single audio and loop
-        audio1.loop = true;
-        audio1.volume = 0.7;
-        audio1.play().catch(err => console.log("Audio playback failed:", err));
-      });
+  window.addEventListener("load", () => {
+    const overlay = document.getElementById("overlay");
+    const btn = document.getElementById("enterBtn");
+  
+    let audio;
+  
+    btn.addEventListener("click", () => {
+      // hide overlay
+      overlay.classList.add("hidden");
+      setTimeout(() => { overlay.style.display = "none"; }, 1000);
+  
+      // dynamically create audio
+      audio = new Audio("Assets/NeoGreenChamber.mp3");
+      audio.loop = true;
+      audio.volume = 0; // start muted
+  
+      audio.play().catch(err => console.error("Audio playback failed:", err));
+  
+      // fade-in over 2 seconds
+      let targetVolume = 0.7;
+      let fadeDuration = 2000; // milliseconds
+      let intervalTime = 50; // update every 50ms
+      let step = targetVolume / (fadeDuration / intervalTime);
+  
+      let fadeInterval = setInterval(() => {
+        if (audio.volume < targetVolume) {
+          audio.volume = Math.min(audio.volume + step, targetVolume);
+        } else {
+          clearInterval(fadeInterval);
+        }
+      }, intervalTime);
     });
-  </script>
+  });
+</script>
 </body>
 </html>
