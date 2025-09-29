@@ -146,8 +146,8 @@
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(233, 30, 99, 0.7);
     }
-    /* Mute and Rotation Toggle Buttons */
-    #muteBtn, #rotationBtn {
+    /* Language, Mute, and Rotation Toggle Buttons */
+    #languageBtn, #muteBtn, #rotationBtn {
       position: fixed;
       top: 20px;
       background: rgba(0, 0, 0, 0.7);
@@ -161,6 +161,13 @@
       cursor: pointer;
       transition: background 0.3s ease, transform 0.2s ease;
       z-index: 10000;
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+    }
+    #languageBtn {
+      right: 140px;
     }
     #muteBtn {
       right: 80px;
@@ -168,7 +175,7 @@
     #rotationBtn {
       right: 20px;
     }
-    #muteBtn:hover, #rotationBtn:hover {
+    #languageBtn:hover, #muteBtn:hover, #rotationBtn:hover {
       background: rgba(0, 0, 0, 0.9);
       transform: scale(1.1);
     }
@@ -192,18 +199,22 @@
         width: 80%;
         max-width: 300px;
       }
-      #muteBtn, #rotationBtn {
+      #languageBtn, #muteBtn, #rotationBtn {
         width: 40px;
         height: 40px;
       }
-      #muteBtn .material-symbols-outlined, #rotationBtn .material-symbols-outlined {
-        font-size: 20px;
+      #languageBtn {
+        font-size: 14px;
+        right: 125px;
       }
       #muteBtn {
         right: 70px;
       }
       #rotationBtn {
         right: 15px;
+      }
+      #muteBtn .material-symbols-outlined, #rotationBtn .material-symbols-outlined {
+        font-size: 20px;
       }
     }
   </style>
@@ -212,18 +223,20 @@
   <!-- Overlay / Welcome screen -->
   <div id="overlay">
     <div id="particles"></div>
-    <h1>Welcome to Fractal Cosmos</h1>
-    <p>Dive into an immersive 360 gallery where fractals reveal order in chaos. Experience infinite landscapes that blend mathematics, art, and sound into a mesmerizing audiovisual journey.</p>
-    <strong>How to Explore:</strong>
-    <ul>
-      <li><span class="material-symbols-outlined">gesture</span> Rotate to look around the 360 environment.</li>
-      <li><span class="material-symbols-outlined">ads_click</span> Select thumbnail images to switch between fractal worlds.</li>
-      <li><span class="material-symbols-outlined">volume_up</span> Use the mute button (top right) to toggle audio on/off.</li>
-      <li><span class="material-symbols-outlined">rotate_90_degrees_ccw</span> Use the rotation button (top right) to toggle sky rotation on/off.</li>
-      <li>Wear headphones for an immersive soundscape.</li>
+    <h1 id="welcomeTitle">Welcome to Fractal Cosmos</h1>
+    <p id="welcomeText">Dive into an immersive 360 gallery where fractals reveal order in chaos. Experience infinite landscapes that blend mathematics, art, and sound into a mesmerizing audiovisual journey.</p>
+    <strong id="howToExplore">How to Explore:</strong>
+    <ul id="instructions">
+      <li><span class="material-symbols-outlined">gesture</span><span id="rotateText">Rotate to look around the 360 environment.</span></li>
+      <li><span class="material-symbols-outlined">ads_click</span><span id="selectText">Select thumbnail images to switch between fractal worlds.</span></li>
+      <li><span class="material-symbols-outlined">volume_up</span><span id="muteText">Use the mute button (top right) to toggle audio on/off.</span></li>
+      <li><span class="material-symbols-outlined">rotate_90_degrees_ccw</span><span id="rotationText">Use the rotation button (top right) to toggle sky rotation on/off.</span></li>
+      <li id="headphonesText">Wear headphones for an immersive soundscape.</li>
     </ul>
     <button id="enterBtn">Enter the Gallery</button>
   </div>
+  <!-- Language Toggle Button -->
+  <button id="languageBtn" title="Toggle Language">EN</button>
   <!-- Mute/Unmute Button -->
   <button id="muteBtn" title="Toggle Audio">
     <span class="material-symbols-outlined">volume_up</span>
@@ -250,7 +263,7 @@
       <img id="thumb-architect" crossorigin="anonymous" src="Assets/thumb-architect.png">
       <img id="thumb-architect2" crossorigin="anonymous" src="Assets/thumb-architect2.png">
       <img id="thumb-citypurple" crossorigin="anonymous" src="Assets/thumb-citypurple.png">
-      <img id="thumb-miraduro" crossorigin="anonymous" src="Assets/thumb-miraduro.png">
+      <img id="thumb-miraduro" crossorigin="anonymous" src="Assets/miraduro.png">
       <img id="thumb-aquarium" crossorigin="anonymous" src="Assets/thumb-aquarium.png">
       <img id="thumb-calabria" crossorigin="anonymous" src="Assets/thumb-calabria.png">
       <img id="thumb-circus" crossorigin="anonymous" src="Assets/thumb-circus.png">
@@ -292,7 +305,9 @@
         event-set__mouseleave="_event: mouseleave; material.color: #ffffff"
         raycaster="objects: .link"></a-cursor>
       <!-- Ray visual -->
-      <a-entity line="start: 0 0 0; end: 0 0 -5; color: #ffffff; opacity: 0.5"></a-entity>
+      <a-entity line="start: 0 0 0; end: 0 0 -5; color: #ffffff; opacity: 0.5"
+                event-set__mouseenter="_event: mouseenter; color: #00ffff; opacity: 0.8"
+                event-set__mouseleave="_event: mouseleave; color: #ffffff; opacity: 0.5"></a-entity>
     </a-entity>
   </a-scene>
   <script>
@@ -301,13 +316,65 @@
       const enterBtn = document.getElementById("enterBtn");
       const muteBtn = document.getElementById("muteBtn");
       const rotationBtn = document.getElementById("rotationBtn");
+      const languageBtn = document.getElementById("languageBtn");
       const audioEntity = document.getElementById("background-audio");
       const sky = document.getElementById("image-360");
       const particlesContainer = document.getElementById("particles");
       let isMuted = false;
       let isRotating = true;
+      let currentLanguage = 'en';
 
-      // Create particle effect (reduced to 20 particles)
+      // Language translations
+      const translations = {
+        en: {
+          welcomeTitle: 'Welcome to Fractal Cosmos',
+          welcomeText: 'Dive into an immersive 360 gallery where fractals reveal order in chaos. Experience infinite landscapes that blend mathematics, art, and sound into a mesmerizing audiovisual journey.',
+          howToExplore: 'How to Explore:',
+          rotateText: 'Rotate to look around the 360 environment.',
+          selectText: 'Select thumbnail images to switch between fractal worlds.',
+          muteText: 'Use the mute button (top right) to toggle audio on/off.',
+          rotationText: 'Use the rotation button (top right) to toggle sky rotation on/off.',
+          headphonesText: 'Wear headphones for an immersive soundscape.',
+          enterBtn: 'Enter the Gallery',
+          muteBtnTitle: 'Toggle Audio',
+          rotationBtnTitle: 'Toggle Sky Rotation',
+          languageBtnTitle: 'Toggle Language'
+        },
+        el: {
+          welcomeTitle: 'Καλώς ήρθατε στο Fractal Cosmos',
+          welcomeText: 'Βυθιστείτε σε μια καθηλωτική γκαλερί 360° όπου τα φράκταλ αποκαλύπτουν τάξη μέσα στο χάος. Ζήστε ατέλειωτα τοπία που συνδυάζουν μαθηματικά, τέχνη και ήχο σε ένα μαγευτικό οπτικοακουστικό ταξίδι.',
+          howToExplore: 'Πώς να Εξερευνήσετε:',
+          rotateText: 'Περιστρέψτε για να κοιτάξετε γύρω σας στο περιβάλλον 360°.',
+          selectText: 'Επιλέξτε μικρογραφίες εικόνων για να αλλάξετε μεταξύ φράκταλ κόσμων.',
+          muteText: 'Χρησιμοποιήστε το κουμπί σίγασης (πάνω δεξιά) για να ενεργοποιήσετε/απενεργοποιήσετε τον ήχο.',
+          rotationText: 'Χρησιμοποιήστε το κουμπί περιστροφής (πάνω δεξιά) για να ενεργοποιήσετε/απενεργοποιήσετε την περιστροφή του ουρανού.',
+          headphonesText: 'Φορέστε ακουστικά για μια καθηλωτική ηχητική εμπειρία.',
+          enterBtn: 'Είσοδος στη Γκαλερί',
+          muteBtnTitle: 'Εναλλαγή Ήχου',
+          rotationBtnTitle: 'Εναλλαγή Περιστροφής Ουρανού',
+          languageBtnTitle: 'Εναλλαγή Γλώσσας'
+        }
+      };
+
+      // Update language
+      function updateLanguage(lang) {
+        currentLanguage = lang;
+        document.getElementById('welcomeTitle').textContent = translations[lang].welcomeTitle;
+        document.getElementById('welcomeText').textContent = translations[lang].welcomeText;
+        document.getElementById('howToExplore').textContent = translations[lang].howToExplore;
+        document.getElementById('rotateText').textContent = translations[lang].rotateText;
+        document.getElementById('selectText').textContent = translations[lang].selectText;
+        document.getElementById('muteText').textContent = translations[lang].muteText;
+        document.getElementById('rotationText').textContent = translations[lang].rotationText;
+        document.getElementById('headphonesText').textContent = translations[lang].headphonesText;
+        document.getElementById('enterBtn').textContent = translations[lang].enterBtn;
+        muteBtn.setAttribute('title', translations[lang].muteBtnTitle);
+        rotationBtn.setAttribute('title', translations[lang].rotationBtnTitle);
+        languageBtn.setAttribute('title', translations[lang].languageBtnTitle);
+        languageBtn.textContent = lang === 'en' ? 'EN' : 'ΕΛ';
+      }
+
+      // Create particle effect (20 particles)
       function createParticles() {
         for (let i = 0; i < 20; i++) {
           const particle = document.createElement("div");
@@ -346,6 +413,7 @@
         isMuted = !isMuted;
         audioEntity.setAttribute('sound', 'volume', isMuted ? 0 : 0.7);
         muteBtn.innerHTML = `<span class="material-symbols-outlined">${isMuted ? 'volume_off' : 'volume_up'}</span>`;
+        muteBtn.setAttribute('title', translations[currentLanguage].muteBtnTitle);
       });
 
       // Rotation toggle
@@ -366,6 +434,13 @@
           sky.components.animation.pause();
           rotationBtn.innerHTML = `<span class="material-symbols-outlined">pause_circle</span>`;
         }
+        rotationBtn.setAttribute('title', translations[currentLanguage].rotationBtnTitle);
+      });
+
+      // Language toggle
+      languageBtn.addEventListener("click", () => {
+        const newLang = currentLanguage === 'en' ? 'el' : 'en';
+        updateLanguage(newLang);
       });
 
       // Enter button click
@@ -394,6 +469,9 @@
           });
         }
       });
+
+      // Initialize language
+      updateLanguage('en');
     });
   </script>
 </body>
