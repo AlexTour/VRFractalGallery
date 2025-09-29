@@ -42,62 +42,63 @@
       sound="on: click; src: #click-sound"></a-entity>
   </script>
   <style>
-    /* Fullscreen overlay with frosted glass background */
+    /* Fullscreen overlay with edgy frosted glass background */
     #overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7) url('Assets/output_prRz0G.gif') center center no-repeat;
-      background-size: cover;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(10, 10, 10, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: #ffffff;
       text-align: center;
       font-family: 'Roboto', sans-serif;
       z-index: 9999;
       transition: opacity 1.5s ease-in-out;
       padding: 20px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
     }
     #overlay.hidden {
       opacity: 0;
       pointer-events: none;
     }
-    #overlay img {
-      max-width: 300px;
-      margin-bottom: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    }
     #overlay h1 {
       font-size: 2.5em;
       font-weight: 700;
-      margin-bottom: 10px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      margin-bottom: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(45deg, #e91e63, #00e5ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
     #overlay p {
       font-size: 1.2em;
       font-weight: 300;
       max-width: 600px;
       margin: 10px 20px;
+      line-height: 1.5;
     }
     #overlay button {
       padding: 12px 24px;
       font-size: 1.2em;
       font-weight: 400;
       margin-top: 20px;
-      background: #1e88e5;
+      background: #e91e63;
       color: white;
-      border: none;
-      border-radius: 5px;
+      border: 2px solid #ffffff33;
+      border-radius: 0;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      box-shadow: 0 0 15px rgba(233, 30, 99, 0.5);
     }
     #overlay button:hover {
-      background: #1565c0;
+      background: #c2185b;
       transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(233, 30, 99, 0.7);
     }
     /* Mute/Unmute button */
     #muteBtn {
@@ -105,7 +106,7 @@
       top: 20px;
       right: 20px;
       background: rgba(0, 0, 0, 0.7);
-      border: none;
+      border: 2px solid #ffffff33;
       border-radius: 50%;
       width: 50px;
       height: 50px;
@@ -113,11 +114,12 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
       z-index: 10000;
     }
     #muteBtn:hover {
       background: rgba(0, 0, 0, 0.9);
+      transform: scale(1.1);
     }
     #muteBtn .material-symbols-outlined {
       font-size: 24px;
@@ -127,14 +129,11 @@
     @media (max-width: 600px) {
       #overlay h1 {
         font-size: 1.8em;
+        letter-spacing: 1px;
       }
       #overlay p {
         font-size: 1em;
         max-width: 90%;
-      }
-      #overlay img {
-        max-width: 80%;
-        width: 250px;
       }
       #overlay button {
         font-size: 1em;
@@ -155,7 +154,6 @@
 <body>
   <!-- Overlay / Welcome screen -->
   <div id="overlay">
-    <img src="Assets/posterA.jpg" alt="Fractal Cosmos Poster">
     <h1>Welcome to Fractal Cosmos</h1>
     <p>Embark on an audiovisual journey through infinite fractal landscapes, where mathematics weaves art and sound into breathtaking patterns. Discover the beauty and harmony hidden within nature’s chaos.</p>
     <p><strong>How to Explore:</strong> Use your mouse or tap/swipe on your phone to look around, or use a VR headset. Click or tap thumbnail images to switch between fractal worlds. Wear headphones for an immersive soundscape.</p>
