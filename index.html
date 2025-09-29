@@ -2,43 +2,44 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Fractal Cosmos: a VR Gallery</title>
-  <meta name="description" content="Fractal Cosmos: a VR Gallery">
-   <!-- Facebook Meta Tags -->
-    <meta property="og:url" content="https://alextour.github.io/VRFractalGallery/">
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Fractal Cosmos: a VR Gallery">
-    <meta property="og:description" content="Explore Fractals like never before.">
-    <meta property="og:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
-
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta property="twitter:domain" content="alextour.github.io">
-    <meta property="twitter:url" content="https://alextour.github.io/VRFractalGallery/">
-    <meta name="twitter:title" content="Fractal Cosmos: a VR Gallery">
-    <meta name="twitter:description" content="Explore Fractals like never before.">
-    <meta name="twitter:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
-  
+  <title>Fractal Cosmos: An Immersive VR Gallery</title>
+  <meta name="description" content="Dive into infinite fractal worlds where mathematics meets art in a symphony of colors and sounds.">
+  <!-- Facebook Meta Tags -->
+  <meta property="og:url" content="https://alextour.github.io/VRFractalGallery/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Fractal Cosmos: An Immersive VR Gallery">
+  <meta property="og:description" content="Embark on an audiovisual journey through endless fractal landscapes, discovering beauty in chaos and harmony in nature.">
+  <meta property="og:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="alextour.github.io">
+  <meta property="twitter:url" content="https://alextour.github.io/VRFractalGallery/">
+  <meta name="twitter:title" content="Fractal Cosmos: An Immersive VR Gallery">
+  <meta name="twitter:description" content="Embark on an audiovisual journey through endless fractal landscapes, discovering beauty in chaos and harmony in nature.">
+  <meta name="twitter:image" content="https://opengraph.b-cdn.net/production/documents/87d018a3-34b3-4fae-afb8-efd48e71ae99.png?token=0SJ6lVqrkGYmM_F2urP1oTc3HqRb1_spiTRhgDBCW94&height=627&width=1200&expires=33241777252">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+  <!-- Google Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
   <script src="https://aframe.io/releases/1.7.0/aframe.min.js"></script>
   <script src="https://unpkg.com/aframe-event-set-component@5/dist/aframe-event-set-component.min.js"></script>
   <script src="https://unpkg.com/aframe-layout-component@5.3.0/dist/aframe-layout-component.min.js"></script>
   <script src="https://unpkg.com/aframe-template-component@3.2.1/dist/aframe-template-component.min.js"></script>
   <script src="https://unpkg.com/aframe-proxy-event-component@2.1.0/dist/aframe-proxy-event-component.min.js"></script>
-  <!-- Image link template to be reused. -->
-    <script id="link" type="text/html">
-      <a-entity class="link"
-        geometry="primitive: plane; height: 0.5; width: 0.5"
-        material="src: ${thumb}"
-        transparent: true
-        opacity: 0.9
-        alpha-test: 0.5
-
-        event-set__mouseenter="scale: 1.2 1.2 1"
-        event-set__mouseleave="scale: 1 1 1"
-        event-set__click="_target: #image-360; _delay: 300; material.src: ${src}"
-        proxy-event="event: click; to: #image-360; as: fade"
-        sound="on: click; src: #click-sound"></a-entity>
-    </script>
+  <!-- Image link template -->
+  <script id="link" type="text/html">
+    <a-entity class="link"
+      geometry="primitive: plane; height: 0.5; width: 0.5"
+      material="src: ${thumb}"
+      transparent="true"
+      opacity="0.9"
+      alpha-test="0.5"
+      animation__scalein="property: scale; to: 1.2 1.2 1; dur: 300; easing: easeOutQuad; startEvents: mouseenter"
+      animation__scaleout="property: scale; to: 1 1 1; dur: 300; easing: easeOutQuad; startEvents: mouseleave"
+      event-set__click="_target: #image-360; _delay: 300; material.src: ${src}"
+      proxy-event="event: click; to: #image-360; as: fade"
+      sound="on: click; src: #click-sound"></a-entity>
+  </script>
   <style>
     /* Fullscreen overlay with GIF background */
     #overlay {
@@ -52,33 +53,87 @@
       justify-content: center;
       color: white;
       text-align: center;
+      font-family: 'Roboto', sans-serif;
       z-index: 9999;
+      transition: opacity 1.5s ease-in-out;
+    }
+    #overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
     #overlay img {
       max-width: 300px;
       margin-bottom: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+    #overlay h1 {
+      font-size: 2.5em;
+      font-weight: 700;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    #overlay p {
+      font-size: 1.2em;
+      font-weight: 300;
+      max-width: 600px;
+      margin: 10px 20px;
     }
     #overlay button {
       padding: 12px 24px;
-      font-size: 18px;
+      font-size: 1.2em;
+      font-weight: 400;
       margin-top: 20px;
+      background: #1e88e5;
+      color: white;
+      border: none;
+      border-radius: 5px;
       cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
-    #overlay.hidden {
-      opacity: 0;
-      transition: opacity 1s;
-      pointer-events: none;
+    #overlay button:hover {
+      background: #1565c0;
+      transform: scale(1.05);
+    }
+    /* Mute/Unmute button */
+    #muteBtn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      z-index: 10000;
+    }
+    #muteBtn:hover {
+      background: rgba(0, 0, 0, 0.9);
+    }
+    #muteBtn .material-symbols-outlined {
+      font-size: 24px;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <!-- Overlay / Loading screen -->
+  <!-- Overlay / Welcome screen -->
   <div id="overlay">
-    <img src="Assets/posterA.jpg" alt="Poster Image">
-    <h2>For the best experience</h2>
-    <p>Please wear headphones 🎧</p>
-    <button id="enterBtn">Tap to Enter Gallery</button>
+    <img src="Assets/posterA.jpg" alt="Fractal Cosmos Poster">
+    <h1>Welcome to Fractal Cosmos</h1>
+    <p>Step into a mesmerizing audiovisual journey where fractals—endlessly repeating mathematical patterns—unveil the beauty and harmony hidden in nature’s chaos. Experience infinite landscapes that blend art, mathematics, and sound.</p>
+    <p><strong>How to Explore:</strong> Use your mouse or VR headset to look around. Click on thumbnail images to switch between fractal worlds. For the full experience, wear headphones to immerse yourself in the accompanying soundscapes.</p>
+    <button id="enterBtn">Enter the Gallery</button>
   </div>
+  <!-- Mute/Unmute Button -->
+  <button id="muteBtn" title="Toggle Audio">
+    <span class="material-symbols-outlined">volume_up</span>
+  </button>
   <a-scene loading-screen="backgroundColor: black;">
     <a-assets>
       <!-- 360 images -->
@@ -112,7 +167,7 @@
     </a-assets>
     <!-- Audio entity with sound component -->
     <a-entity id="background-audio" sound="src: #bgAudio; autoplay: false; loop: true; volume: 0"></a-entity>
-    <a-sky id="image-360" radius="10" src="#architect"></a-sky>
+    <a-sky id="image-360" radius="10" src="#architect" animation="property: material.opacity; to: 1; dur: 1000; easing: easeInOutQuad"></a-sky>
     <a-entity id="links" position="0 -1 -3">
       <a-entity template="src: #link" data-src="#architect" data-thumb="#thumb-architect" position="-1.5 1 0"></a-entity>
       <a-entity template="src: #link" data-src="#architect2" data-thumb="#thumb-architect2" position="-0.75 1 0"></a-entity>
@@ -125,33 +180,30 @@
       <a-entity template="src: #link" data-src="#mindyourtrippy" data-thumb="#thumb-mindyourtrippy" position="0.75 0.25 0"></a-entity>
       <a-entity template="src: #link" data-src="#pinkturqouise" data-thumb="#thumb-pinkturqouise" position="1.5 0.25 0"></a-entity>
     </a-entity>
-     <!-- Camera + cursor. -->
+    <!-- Camera + cursor -->
     <a-entity camera look-controls>
       <a-cursor
         id="cursor"
-        animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
-        animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+        animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150; easing: easeOutQuad"
+        animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500; easing: easeInOutQuad"
         event-set__mouseenter="_event: mouseenter; color: springgreen"
-        event-set__mouseleave="_event: mouseleave; color: black"
+        event-set__mouseleave="_event: mouseleave; color: white"
         raycaster="objects: .link"></a-cursor>
     </a-entity>
-
   </a-scene>
   <script>
     window.addEventListener("load", () => {
       const overlay = document.getElementById("overlay");
-      const btn = document.getElementById("enterBtn");
+      const enterBtn = document.getElementById("enterBtn");
+      const muteBtn = document.getElementById("muteBtn");
       const audioEntity = document.getElementById("background-audio");
+      let isMuted = false;
 
-      btn.addEventListener("click", () => {
-        // Hide overlay
-        overlay.classList.add("hidden");
-        setTimeout(() => { overlay.style.display = "none"; }, 1000);
-
-        // Start audio with fade-in using A-Frame's sound component
+      // Start audio with fade-in
+      function startAudio() {
         audioEntity.components.sound.playSound();
         const targetVolume = 0.7;
-        const fadeDuration = 2000; // 2 seconds
+        const fadeDuration = 2000;
         const intervalTime = 50;
         const step = targetVolume / (fadeDuration / intervalTime);
         let currentVolume = 0;
@@ -159,20 +211,47 @@
         const fadeInterval = setInterval(() => {
           if (currentVolume < targetVolume) {
             currentVolume = Math.min(currentVolume + step, targetVolume);
-            audioEntity.setAttribute('sound', 'volume', currentVolume);
+            audioEntity.setAttribute('sound', 'volume', isMuted ? 0 : currentVolume);
           } else {
             clearInterval(fadeInterval);
           }
         }, intervalTime);
+      }
 
-        // Error handling for audio playback
-        audioEntity.components.sound.audio.addEventListener('error', (err) => {
-          console.error("Audio playback failed:", err);
-        });
+      // Mute/Unmute toggle
+      muteBtn.addEventListener("click", () => {
+        isMuted = !isMuted;
+        audioEntity.setAttribute('sound', 'volume', isMuted ? 0 : 0.7);
+        muteBtn.innerHTML = `<span class="material-symbols-outlined">${isMuted ? 'volume_off' : 'volume_up'}</span>`;
+      });
+
+      // Enter button click
+      enterBtn.addEventListener("click", () => {
+        overlay.classList.add("hidden");
+        setTimeout(() => { overlay.style.display = "none"; }, 1500);
+        startAudio();
+      });
+
+      // Handle audio errors
+      audioEntity.components.sound.audio.addEventListener('error', (err) => {
+        console.error("Audio playback failed:", err);
+      });
+
+      // Smooth sky transition on image change
+      AFRAME.registerComponent('fade', {
+        init: function () {
+          this.el.addEventListener('fade', () => {
+            this.el.setAttribute('animation', {
+              property: 'material.opacity',
+              from: 0,
+              to: 1,
+              dur: 1000,
+              easing: 'easeInOutQuad'
+            });
+          });
+        }
       });
     });
   </script>
 </body>
 </html>
-
-
