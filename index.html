@@ -33,11 +33,19 @@
         opacity: 0.9
         alpha-test: 0.5
 
-        event-set__mouseenter="scale: 1.2 1.2 1"
-        event-set__mouseleave="scale: 1 1 1"
+        event-set__mouseenter="scale: 1.2 1.2 1; rotation: 0 0 5"
+        event-set__mouseleave="scale: 1 1 1; rotation: 0 0 0"
         event-set__click="_target: #image-360; _delay: 300; material.src: ${src}"
         proxy-event="event: click; to: #image-360; as: fade"
+        proxy-event="event: click; to: #particles; as: sky-changed"
         sound="on: click; src: #click-sound"></a-entity>
+    </script>
+  <!-- Particle template -->
+    <script id="particle" type="text/html">
+      <a-entity geometry="primitive: sphere; radius: 0.01" material="color: ${color}; shader: flat"
+                position="${x} ${y} ${z}" animation="property: position; loop: true; dur: 10000; to: ${tx} ${ty} ${tz}; easing: easeInOutSine"
+                animation__color="property: material.color; startEvents: sky-changed; from: ${color}; to: ${nextColor}; dur: 2000; loop: true; dir: alternate">
+      </a-entity>
     </script>
   <style>
     /* Fullscreen overlay with GIF background */
@@ -69,6 +77,33 @@
       transition: opacity 1s;
       pointer-events: none;
     }
+    #exitBtn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 8px 16px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 10000;
+    }
+    #volumeSlider {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      z-index: 10000;
+    }
+    #hud {
+      position: fixed;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.5);
+      color: white;
+      padding: 10px;
+      border-radius: 5px;
+      z-index: 10000;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -79,41 +114,49 @@
     <p>Please wear headphones 🎧</p>
     <button id="enterBtn">Tap to Enter Gallery</button>
   </div>
-  <a-scene loading-screen="backgroundColor: black;">
+  <!-- Exit Button -->
+  <button id="exitBtn" style="display: none;">Exit Gallery</button>
+  <!-- Volume Slider (non-VR) -->
+  <input type="range" id="volumeSlider" min="0" max="1" step="0.1" value="0.7" style="display: none;">
+  <!-- HUD Tooltip -->
+  <div id="hud">Gaze and click thumbnails to explore. Use WASD/arrow keys to move.</div>
+  <a-scene loading-screen="backgroundColor: black;" embedded vr-mode-ui="enabled: false">
     <a-assets>
       <!-- 360 images -->
-      <img id="calabriabnw" crossorigin="anonymous" src="Assets/calabriabnw.jpg">
-      <img id="architect" crossorigin="anonymous" src="Assets/architect.jpg">
-      <img id="architect2" crossorigin="anonymous" src="Assets/architect2.jpg">
-      <img id="citypurple" crossorigin="anonymous" src="Assets/citypurple.jpg">
-      <img id="miraduro" crossorigin="anonymous" src="Assets/miraduro.jpg">
-      <img id="aquarium" crossorigin="anonymous" src="Assets/aquarium360REDUCED.jpg">
-      <img id="calabriaColor" crossorigin="anonymous" src="Assets/calabriaREDUCED.jpg">
-      <img id="circus" crossorigin="anonymous" src="Assets/circusREDUCED.jpg">
-      <img id="mindyourtrippy" crossorigin="anonymous" src="Assets/mindyourtrippy360REDUCED.jpg">
-      <img id="pinkturqouise" crossorigin="anonymous" src="Assets/pinkturqouiseREDUCED.jpg">
+      <img id="calabriabnw" crossorigin="anonymous" src="Assets/calabriabnw.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="architect" crossorigin="anonymous" src="Assets/architect.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="architect2" crossorigin="anonymous" src="Assets/architect2.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="citypurple" crossorigin="anonymous" src="Assets/citypurple.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="miraduro" crossorigin="anonymous" src="Assets/miraduro.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="aquarium" crossorigin="anonymous" src="Assets/aquarium360REDUCED.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="calabriaColor" crossorigin="anonymous" src="Assets/calabriaREDUCED.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="circus" crossorigin="anonymous" src="Assets/circusREDUCED.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="mindyourtrippy" crossorigin="anonymous" src="Assets/mindyourtrippy360REDUCED.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="pinkturqouise" crossorigin="anonymous" src="Assets/pinkturqouiseREDUCED.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
       <!-- Thumbnails -->
-      <img id="thumb-calabriabnw" crossorigin="anonymous" src="Assets/thumb-calabriabnw.png">
-      <img id="thumb-architect" crossorigin="anonymous" src="Assets/thumb-architect.png">
-      <img id="thumb-architect2" crossorigin="anonymous" src="Assets/thumb-architect2.png">
-      <img id="thumb-citypurple" crossorigin="anonymous" src="Assets/thumb-citypurple.png">
-      <img id="thumb-miraduro" crossorigin="anonymous" src="Assets/thumb-miraduro.png">
-      <img id="thumb-aquarium" crossorigin="anonymous" src="Assets/thumb-aquarium.png">
-      <img id="thumb-calabria" crossorigin="anonymous" src="Assets/thumb-calabria.png">
-      <img id="thumb-circus" crossorigin="anonymous" src="Assets/thumb-circus.png">
-      <img id="thumb-mindyourtrippy" crossorigin="anonymous" src="Assets/thumb-mindyourtrippy.png">
-      <img id="thumb-pinkturqouise" crossorigin="anonymous" src="Assets/thumb-pinkturqouise.png">
+      <img id="thumb-calabriabnw" crossorigin="anonymous" src="Assets/thumb-calabriabnw.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-architect" crossorigin="anonymous" src="Assets/thumb-architect.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-architect2" crossorigin="anonymous" src="Assets/thumb-architect2.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-citypurple" crossorigin="anonymous" src="Assets/thumb-citypurple.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-miraduro" crossorigin="anonymous" src="Assets/thumb-miraduro.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-aquarium" crossorigin="anonymous" src="Assets/thumb-aquarium.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-calabria" crossorigin="anonymous" src="Assets/thumb-calabria.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-circus" crossorigin="anonymous" src="Assets/thumb-circus.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-mindyourtrippy" crossorigin="anonymous" src="Assets/thumb-mindyourtrippy.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="thumb-pinkturqouise" crossorigin="anonymous" src="Assets/thumb-pinkturqouise.png" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
       <!-- Poster -->
-      <img id="posterA" crossorigin="anonymous" src="Assets/posterA.jpg">
-      <img id="city-thumb" crossorigin="anonymous" src="Assets/infobox@2x.jpg">
+      <img id="posterA" crossorigin="anonymous" src="Assets/posterA.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <img id="city-thumb" crossorigin="anonymous" src="Assets/infobox@2x.jpg" onerror="this.src='Assets/fallback.jpg'; console.warn('Asset failed:', this.id);">
+      <!-- Fallback Image (add a simple black or placeholder image to Assets/fallback.jpg) -->
       <!-- Audio -->
       <audio id="bgAudio" src="Assets/NeoGreenChamber.mp3" preload="auto" loop></audio>
       <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
     </a-assets>
     <!-- Audio entity with sound component -->
-    <a-entity id="background-audio" sound="src: #bgAudio; autoplay: false; loop: true; volume: 0"></a-entity>
-    <a-sky id="image-360" radius="10" src="#architect"></a-sky>
-    <a-entity id="links" position="0 -1 -3">
+    <a-entity id="background-audio" sound="src: #bgAudio; autoplay: false; loop: true; volume: 0; refDistance: 10; rolloffFactor: 2"></a-entity>
+    <a-sky id="image-360" radius="10" src="" animation__fade="property: material.opacity; from: 0; to: 1; dur: 300; startEvents: fade"></a-sky>
+    <a-light type="ambient" color="#404040" intensity="0.5"></a-light>
+    <a-entity id="links" layout="type: line; margin: 0.2; align: center" position="0 -1 -3">
       <a-entity template="src: #link" data-src="#architect" data-thumb="#thumb-architect" position="-1.5 1 0"></a-entity>
       <a-entity template="src: #link" data-src="#architect2" data-thumb="#thumb-architect2" position="-0.75 1 0"></a-entity>
       <a-entity template="src: #link" data-src="#citypurple" data-thumb="#thumb-citypurple" position="0 1 0"></a-entity>
@@ -125,12 +168,14 @@
       <a-entity template="src: #link" data-src="#mindyourtrippy" data-thumb="#thumb-mindyourtrippy" position="0.75 0.25 0"></a-entity>
       <a-entity template="src: #link" data-src="#pinkturqouise" data-thumb="#thumb-pinkturqouise" position="1.5 0.25 0"></a-entity>
     </a-entity>
+    <!-- Particles -->
+    <a-entity id="particles" position="0 0 -5"></a-entity>
      <!-- Camera + cursor. -->
-    <a-entity camera look-controls>
+    <a-entity camera look-controls="pointerLockEnabled: false">
       <a-cursor
         id="cursor"
         animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
-        animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+        animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
         event-set__mouseenter="_event: mouseenter; color: springgreen"
         event-set__mouseleave="_event: mouseleave; color: black"
         raycaster="objects: .link"></a-cursor>
@@ -141,34 +186,100 @@
     window.addEventListener("load", () => {
       const overlay = document.getElementById("overlay");
       const btn = document.getElementById("enterBtn");
+      const exitBtn = document.getElementById("exitBtn");
+      const volumeSlider = document.getElementById("volumeSlider");
+      const hud = document.getElementById("hud");
       const audioEntity = document.getElementById("background-audio");
+      const sky = document.getElementById("image-360");
+      const particleEl = document.getElementById("particles");
+
+      // Generate particles
+      const colors = ['#0000FF', '#00FFFF', '#FF00FF', '#FF0000', '#00FF00']; // Palette: blue, cyan, magenta, red, green
+      for (let i = 0; i < 50; i++) {
+        const x = (Math.random() - 0.5) * 10;
+        const y = (Math.random() - 0.5) * 5;
+        const z = (Math.random() - 0.5) * -5;
+        const tx = x + (Math.random() - 0.5) * 0.5;
+        const ty = y + (Math.random() - 0.5) * 0.2;
+        const tz = z + (Math.random() - 0.5) * -0.3;
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const nextColor = colors[(colors.indexOf(color) + 1) % colors.length];
+        const particle = document.createElement('a-entity');
+        particle.setAttribute('template', 'src: #particle');
+        particle.setAttribute('data-color', color);
+        particle.setAttribute('data-nextColor', nextColor);
+        particle.setAttribute('data-x', x);
+        particle.setAttribute('data-y', y);
+        particle.setAttribute('data-z', z);
+        particle.setAttribute('data-tx', tx);
+        particle.setAttribute('data-ty', ty);
+        particle.setAttribute('data-tz', tz);
+        particleEl.appendChild(particle);
+      }
 
       btn.addEventListener("click", () => {
         // Hide overlay
         overlay.classList.add("hidden");
         setTimeout(() => { overlay.style.display = "none"; }, 1000);
 
-        // Start audio with fade-in using A-Frame's sound component
-        audioEntity.components.sound.playSound();
-        const targetVolume = 0.7;
-        const fadeDuration = 2000; // 2 seconds
-        const intervalTime = 50;
-        const step = targetVolume / (fadeDuration / intervalTime);
-        let currentVolume = 0;
+        // Show exit button, volume slider, HUD
+        exitBtn.style.display = "block";
+        volumeSlider.style.display = "block";
+        hud.style.display = "block";
+        setTimeout(() => { hud.style.display = "none"; }, 5000); // Hide HUD after 5s
 
-        const fadeInterval = setInterval(() => {
-          if (currentVolume < targetVolume) {
-            currentVolume = Math.min(currentVolume + step, targetVolume);
-            audioEntity.setAttribute('sound', 'volume', currentVolume);
-          } else {
-            clearInterval(fadeInterval);
-          }
-        }, intervalTime);
+        // Load default sky
+        sky.setAttribute('src', '#architect');
+
+        // Start audio with animation fade-in
+        audioEntity.components.sound.playSound();
+        audioEntity.setAttribute('animation__volume', 'property: sound.volume; from: 0; to: 0.7; dur: 2000; easing: easeInOutSine');
 
         // Error handling for audio playback
         audioEntity.components.sound.audio.addEventListener('error', (err) => {
           console.error("Audio playback failed:", err);
+          overlay.innerHTML += '<p style="color: red;">Audio unavailable—continuing silently.</p>';
+          overlay.style.display = "flex";
+          overlay.classList.remove("hidden");
+          btn.textContent = 'Enter Without Sound';
         });
+      });
+
+      // Exit button
+      exitBtn.addEventListener("click", () => {
+        overlay.style.display = "flex";
+        overlay.classList.remove("hidden");
+        exitBtn.style.display = "none";
+        volumeSlider.style.display = "none";
+        audioEntity.components.sound.pause();
+        sky.setAttribute('src', '');
+      });
+
+      // Volume slider
+      volumeSlider.addEventListener("input", (e) => {
+        audioEntity.setAttribute('sound', 'volume', e.target.value);
+      });
+
+      // Global error handler
+      window.addEventListener('error', (e) => {
+        console.error('Global error:', e);
+        // Show overlay with error message
+        overlay.innerHTML += '<p style="color: red;">An error occurred. Please refresh.</p>';
+        overlay.style.display = "flex";
+        overlay.classList.remove("hidden");
+      });
+
+      // Keyboard navigation (cycle thumbnails)
+      let currentIndex = 0;
+      const links = document.querySelectorAll('.link');
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          currentIndex = (currentIndex + 1) % links.length;
+          links[currentIndex].emit('click');
+        } else if (e.key === 'ArrowLeft') {
+          currentIndex = (currentIndex - 1 + links.length) % links.length;
+          links[currentIndex].emit('click');
+        }
       });
     });
   </script>
