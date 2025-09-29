@@ -2,6 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fractal Cosmos: An Immersive VR Gallery</title>
   <meta name="description" content="Dive into infinite fractal worlds where mathematics meets art in a symphony of colors and sounds.">
   <!-- Facebook Meta Tags -->
@@ -41,12 +42,14 @@
       sound="on: click; src: #click-sound"></a-entity>
   </script>
   <style>
-    /* Fullscreen overlay with GIF background */
+    /* Fullscreen overlay with frosted glass background */
     #overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: black url('Assets/output_prRz0G.gif') center center no-repeat;
+      background: rgba(0, 0, 0, 0.7) url('Assets/output_prRz0G.gif') center center no-repeat;
       background-size: cover;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -56,6 +59,7 @@
       font-family: 'Roboto', sans-serif;
       z-index: 9999;
       transition: opacity 1.5s ease-in-out;
+      padding: 20px;
     }
     #overlay.hidden {
       opacity: 0;
@@ -119,6 +123,33 @@
       font-size: 24px;
       color: white;
     }
+    /* Smartphone compatibility */
+    @media (max-width: 600px) {
+      #overlay h1 {
+        font-size: 1.8em;
+      }
+      #overlay p {
+        font-size: 1em;
+        max-width: 90%;
+      }
+      #overlay img {
+        max-width: 80%;
+        width: 250px;
+      }
+      #overlay button {
+        font-size: 1em;
+        padding: 10px 20px;
+        width: 80%;
+        max-width: 300px;
+      }
+      #muteBtn {
+        width: 40px;
+        height: 40px;
+      }
+      #muteBtn .material-symbols-outlined {
+        font-size: 20px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -126,8 +157,8 @@
   <div id="overlay">
     <img src="Assets/posterA.jpg" alt="Fractal Cosmos Poster">
     <h1>Welcome to Fractal Cosmos</h1>
-    <p>Step into a mesmerizing audiovisual journey where fractals—endlessly repeating mathematical patterns—unveil the beauty and harmony hidden in nature’s chaos. Experience infinite landscapes that blend art, mathematics, and sound.</p>
-    <p><strong>How to Explore:</strong> Use your mouse or VR headset to look around. Click on thumbnail images to switch between fractal worlds. For the full experience, wear headphones to immerse yourself in the accompanying soundscapes.</p>
+    <p>Embark on an audiovisual journey through infinite fractal landscapes, where mathematics weaves art and sound into breathtaking patterns. Discover the beauty and harmony hidden within nature’s chaos.</p>
+    <p><strong>How to Explore:</strong> Use your mouse or tap/swipe on your phone to look around, or use a VR headset. Click or tap thumbnail images to switch between fractal worlds. Wear headphones for an immersive soundscape.</p>
     <button id="enterBtn">Enter the Gallery</button>
   </div>
   <!-- Mute/Unmute Button -->
@@ -187,7 +218,7 @@
         animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150; easing: easeOutQuad"
         animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500; easing: easeInOutQuad"
         event-set__mouseenter="_event: mouseenter; color: springgreen"
-        event-set__mouseleave="_event: mouseleave; color: white"
+        event-set__mouseleave="_event: mouseleave; color: black"
         raycaster="objects: .link"></a-cursor>
     </a-entity>
   </a-scene>
