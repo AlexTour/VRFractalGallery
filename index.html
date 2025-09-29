@@ -106,6 +106,23 @@
       margin: 10px 20px;
       line-height: 1.5;
     }
+    #overlay ul {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      text-align: left;
+    }
+    #overlay li {
+      font-size: 1.1em;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+    }
+    #overlay li .material-symbols-outlined {
+      font-size: 24px;
+      margin-right: 10px;
+      color: #00e5ff;
+    }
     #overlay button {
       padding: 12px 24px;
       font-size: 1.2em;
@@ -165,7 +182,7 @@
         font-size: 1.8em;
         letter-spacing: 1px;
       }
-      #overlay p {
+      #overlay p, #overlay li {
         font-size: 1em;
         max-width: 90%;
       }
@@ -197,7 +214,14 @@
     <div id="particles"></div>
     <h1>Welcome to Fractal Cosmos</h1>
     <p>Dive into an immersive 360 gallery where fractals reveal order in chaos. Experience infinite landscapes that blend mathematics, art, and sound into a mesmerizing audiovisual journey.</p>
-    <p><strong>How to Explore:</strong> Rotate to look around and select thumbnail images to switch between fractal worlds. Wear headphones for an immersive soundscape.</p>
+    <strong>How to Explore:</strong>
+    <ul>
+      <li><span class="material-symbols-outlined">gesture</span> Rotate to look around the 360 environment.</li>
+      <li><span class="material-symbols-outlined">ads_click</span> Select thumbnail images to switch between fractal worlds.</li>
+      <li><span class="material-symbols-outlined">volume_up</span> Use the mute button (top right) to toggle audio on/off.</li>
+      <li><span class="material-symbols-outlined">rotate_90_degrees_ccw</span> Use the rotation button (top right) to toggle sky rotation on/off.</li>
+      <li>Wear headphones for an immersive soundscape.</li>
+    </ul>
     <button id="enterBtn">Enter the Gallery</button>
   </div>
   <!-- Mute/Unmute Button -->
@@ -254,15 +278,21 @@
       <a-entity template="src: #link" data-src="#mindyourtrippy" data-thumb="#thumb-mindyourtrippy" position="0.75 0.25 0"></a-entity>
       <a-entity template="src: #link" data-src="#pinkturqouise" data-thumb="#thumb-pinkturqouise" position="1.5 0.25 0"></a-entity>
     </a-entity>
-    <!-- Camera + cursor -->
+    <!-- Camera + custom cursor -->
     <a-entity camera look-controls>
       <a-cursor
         id="cursor"
+        fuse="true"
+        fuse-timeout="1500"
+        geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
+        material="color: #ffffff; shader: flat"
         animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150; easing: easeOutQuad"
         animation__fusing="property: scale; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500; easing: easeInOutQuad"
-        event-set__mouseenter="_event: mouseenter; color: springgreen"
-        event-set__mouseleave="_event: mouseleave; color: black"
+        event-set__mouseenter="_event: mouseenter; material.color: #00ffff"
+        event-set__mouseleave="_event: mouseleave; material.color: #ffffff"
         raycaster="objects: .link"></a-cursor>
+      <!-- Ray visual -->
+      <a-entity line="start: 0 0 0; end: 0 0 -5; color: #ffffff; opacity: 0.5"></a-entity>
     </a-entity>
   </a-scene>
   <script>
