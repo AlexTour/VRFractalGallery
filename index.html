@@ -277,9 +277,9 @@
       let isMuted = false;
       let isRotating = true;
 
-      // Create particle effect
+      // Create particle effect (reduced to 20 particles)
       function createParticles() {
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 20; i++) {
           const particle = document.createElement("div");
           particle.className = "particle";
           particle.style.width = `${Math.random() * 3 + 1}px`;
@@ -322,7 +322,15 @@
       rotationBtn.addEventListener("click", () => {
         isRotating = !isRotating;
         if (isRotating) {
-          sky.components.animation.resume();
+          // Reset and restart animation
+          sky.removeAttribute('animation');
+          sky.setAttribute('animation', {
+            property: 'rotation',
+            to: '0 360 0',
+            dur: 120000,
+            easing: 'linear',
+            loop: true
+          });
           rotationBtn.innerHTML = `<span class="material-symbols-outlined">rotate_90_degrees_ccw</span>`;
         } else {
           sky.components.animation.pause();
