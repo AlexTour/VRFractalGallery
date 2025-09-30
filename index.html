@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fractal Cosmos: An Immersive VR Gallery</title>
   <meta name="description" content="Dive into infinite fractal worlds where mathematics meets art in a symphony of colors and sounds.">
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="Assets/favicon.png">
   <!-- Facebook Meta Tags -->
   <meta property="og:url" content="https://alextour.github.io/VRFractalGallery/">
   <meta property="og:type" content="website">
@@ -31,7 +33,7 @@
   <script id="link" type="text/html">
     <a-entity class="link"
       geometry="primitive: plane; height: 0.5; width: 0.5"
-      material="src: ${thumb}"
+      material="src: ${thumb}; magFilter: Linear; minFilter: Linear"
       transparent="true"
       opacity="0.9"
       alpha-test="0.5"
@@ -236,7 +238,7 @@
     <button id="enterBtn">Enter the Gallery</button>
   </div>
   <!-- Language Toggle Button -->
-  <button id="languageBtn" title="Toggle Language">EN</button>
+  <button id="languageBtn" title="Toggle Language">ΕΛ</button>
   <!-- Mute/Unmute Button -->
   <button id="muteBtn" title="Toggle Audio">
     <span class="material-symbols-outlined">volume_up</span>
@@ -246,7 +248,7 @@
     <span class="material-symbols-outlined">rotate_90_degrees_ccw</span>
   </button>
   <a-scene loading-screen="backgroundColor: black;">
-    <a-assets>
+    <a-assets timeout="30000">
       <!-- 360 images -->
       <img id="calabriabnw" crossorigin="anonymous" src="Assets/calabriabnw.jpg">
       <img id="architect" crossorigin="anonymous" src="Assets/architect.jpg">
@@ -263,7 +265,7 @@
       <img id="thumb-architect" crossorigin="anonymous" src="Assets/thumb-architect.png">
       <img id="thumb-architect2" crossorigin="anonymous" src="Assets/thumb-architect2.png">
       <img id="thumb-citypurple" crossorigin="anonymous" src="Assets/thumb-citypurple.png">
-      <img id="thumb-miraduro" crossorigin="anonymous" src="Assets/miraduro.png">
+      <img id="thumb-miraduro" crossorigin="anonymous" src="Assets/thumb-miraduro.png">
       <img id="thumb-aquarium" crossorigin="anonymous" src="Assets/thumb-aquarium.png">
       <img id="thumb-calabria" crossorigin="anonymous" src="Assets/thumb-calabria.png">
       <img id="thumb-circus" crossorigin="anonymous" src="Assets/thumb-circus.png">
@@ -278,7 +280,7 @@
     </a-assets>
     <!-- Audio entity with sound component -->
     <a-entity id="background-audio" sound="src: #bgAudio; autoplay: false; loop: true; volume: 0"></a-entity>
-    <a-sky id="image-360" radius="10" src="#architect" animation="property: rotation; to: 0 360 0; dur: 120000; easing: linear; loop: true"></a-sky>
+    <a-sky id="image-360" radius="10" src="#architect" material="magFilter: Linear; minFilter: Linear" animation="property: rotation; to: 0 360 0; dur: 180000; easing: linear; loop: true"></a-sky>
     <a-entity id="links" position="0 -1 -3">
       <a-entity template="src: #link" data-src="#architect" data-thumb="#thumb-architect" position="-1.5 1 0"></a-entity>
       <a-entity template="src: #link" data-src="#architect2" data-thumb="#thumb-architect2" position="-0.75 1 0"></a-entity>
@@ -338,7 +340,7 @@
           enterBtn: 'Enter the Gallery',
           muteBtnTitle: 'Toggle Audio',
           rotationBtnTitle: 'Toggle Sky Rotation',
-          languageBtnTitle: 'Toggle Language'
+          languageBtnTitle: 'Switch to Greek'
         },
         el: {
           welcomeTitle: 'Καλώς ήρθατε στο Fractal Cosmos',
@@ -352,7 +354,7 @@
           enterBtn: 'Είσοδος στη Γκαλερί',
           muteBtnTitle: 'Εναλλαγή Ήχου',
           rotationBtnTitle: 'Εναλλαγή Περιστροφής Ουρανού',
-          languageBtnTitle: 'Εναλλαγή Γλώσσας'
+          languageBtnTitle: 'Switch to English'
         }
       };
 
@@ -371,12 +373,12 @@
         muteBtn.setAttribute('title', translations[lang].muteBtnTitle);
         rotationBtn.setAttribute('title', translations[lang].rotationBtnTitle);
         languageBtn.setAttribute('title', translations[lang].languageBtnTitle);
-        languageBtn.textContent = lang === 'en' ? 'EN' : 'ΕΛ';
+        languageBtn.textContent = lang === 'en' ? 'ΕΛ' : 'EN';
       }
 
-      // Create particle effect (20 particles)
+      // Create particle effect (10 particles)
       function createParticles() {
-        for (let i = 0; i < 20; i++) {
+        for (let i = 0; i < 10; i++) {
           const particle = document.createElement("div");
           particle.className = "particle";
           particle.style.width = `${Math.random() * 3 + 1}px`;
@@ -392,7 +394,7 @@
       // Start audio with fade-in
       function startAudio() {
         audioEntity.components.sound.playSound();
-        const targetVolume = 0.7;
+        const targetVolume = 0.4;
         const fadeDuration = 2000;
         const intervalTime = 50;
         const step = targetVolume / (fadeDuration / intervalTime);
@@ -411,7 +413,7 @@
       // Mute/Unmute toggle
       muteBtn.addEventListener("click", () => {
         isMuted = !isMuted;
-        audioEntity.setAttribute('sound', 'volume', isMuted ? 0 : 0.7);
+        audioEntity.setAttribute('sound', 'volume', isMuted ? 0 : 0.4);
         muteBtn.innerHTML = `<span class="material-symbols-outlined">${isMuted ? 'volume_off' : 'volume_up'}</span>`;
         muteBtn.setAttribute('title', translations[currentLanguage].muteBtnTitle);
       });
@@ -420,12 +422,11 @@
       rotationBtn.addEventListener("click", () => {
         isRotating = !isRotating;
         if (isRotating) {
-          // Reset and restart animation
           sky.removeAttribute('animation');
           sky.setAttribute('animation', {
             property: 'rotation',
             to: '0 360 0',
-            dur: 120000,
+            dur: 180000,
             easing: 'linear',
             loop: true
           });
@@ -450,9 +451,21 @@
         startAudio();
       });
 
-      // Handle audio errors
-      audioEntity.components.sound.audio.addEventListener('error', (err) => {
-        console.error("Audio playback failed:", err);
+      // Handle sky texture errors
+      sky.addEventListener('materialtextureerror', () => {
+        console.warn('Sky texture failed to load, setting fallback');
+        sky.setAttribute('src', '#calabriabnw');
+      });
+
+      // Handle audio errors after scene load
+      document.querySelector('a-scene').addEventListener('loaded', () => {
+        if (audioEntity.components.sound && audioEntity.components.sound.audio) {
+          audioEntity.components.sound.audio.addEventListener('error', (err) => {
+            console.error("Audio playback failed:", err);
+          });
+        } else {
+          console.warn("Sound component not initialized.");
+        }
       });
 
       // Smooth sky transition on image change
