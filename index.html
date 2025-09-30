@@ -141,9 +141,15 @@
       border: 2px solid #ffffff33;
       border-radius: 0;
       cursor: pointer;
-      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease, opacity 0.5s ease;
       box-shadow: 0 0 15px rgba(233, 30, 99, 0.5);
       animation: buttonPulse 2s infinite ease-in-out;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #overlay button.visible {
+      opacity: 1;
+      pointer-events: auto;
     }
     @keyframes buttonPulse {
       0%, 100% { box-shadow: 0 0 15px rgba(233, 30, 99, 0.5); }
@@ -153,6 +159,24 @@
       background: #c2185b;
       transform: scale(1.05);
       box-shadow: 0 0 20px rgba(233, 30, 99, 0.7);
+    }
+    /* Loading indicator */
+    #loadingIndicator {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #e91e63;
+      border-top: 4px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-top: 20px;
+      transition: opacity 0.5s ease;
+    }
+    #loadingIndicator.hidden {
+      opacity: 0;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
     /* Language, Mute, and Rotation Toggle Buttons */
     #languageBtn, #muteBtn, #rotationBtn {
@@ -213,6 +237,11 @@
         width: 80%;
         max-width: 300px;
       }
+      #loadingIndicator {
+        width: 32px;
+        height: 32px;
+        border-width: 3px;
+      }
       #languageBtn, #muteBtn, #rotationBtn {
         width: 40px;
         height: 40px;
@@ -246,7 +275,8 @@
       <li><span class="material-symbols-outlined">rotate_90_degrees_ccw</span><span id="rotationText">Use the rotation button (top right) to toggle sky rotation on/off.</span></li>
     </ul>
     <p id="headphonesText">Wear headphones for an immersive soundscape.</p>
-    <button id="enterBtn">Enter the Gallery</button>
+    <div id="loadingIndicator"></div>
+    <button id="enterBtn">ENTER</button>
   </div>
   <!-- Language Toggle Button -->
   <button id="languageBtn" title="Switch to Greek">ΕΛ</button>
@@ -327,6 +357,7 @@
     window.addEventListener("load", () => {
       const overlay = document.getElementById("overlay");
       const enterBtn = document.getElementById("enterBtn");
+      const loadingIndicator = document.getElementById("loadingIndicator");
       const muteBtn = document.getElementById("muteBtn");
       const rotationBtn = document.getElementById("rotationBtn");
       const languageBtn = document.getElementById("languageBtn");
@@ -334,7 +365,8 @@
       const sky = document.getElementById("image-360");
       const particlesContainer = document.getElementById("particles");
       let isMuted = false;
-      let isRotating = true let currentLanguage = 'en';
+      let isRotating = true;
+      let currentLanguage = 'en';
 
       // Language translations
       const translations = {
@@ -346,7 +378,7 @@
           muteText: 'Use the mute button (top right) to toggle audio on/off.',
           rotationText: 'Use the rotation button (top right) to toggle sky rotation on/off.',
           headphonesText: 'Wear headphones for an immersive soundscape.',
-          enterBtn: 'Enter the Gallery',
+          enterBtn: 'ENTER',
           muteBtnTitle: 'Toggle Audio',
           rotationBtnTitle: 'Toggle Sky Rotation',
           languageBtnTitle: 'Switch to Greek'
@@ -359,7 +391,7 @@
           muteText: 'Χρησιμοποιήστε το κουμπί σίγασης (πάνω δεξιά) για να ενεργοποιήσετε/απενεργοποιήσετε τον ήχο.',
           rotationText: 'Χρησιμοποιήστε το κουμπί περιστροφής (πάνω δεξιά) για να ενεργοποιήσετε/απενεργοποιήσετε την περιστροφή του ουρανού.',
           headphonesText: 'Φορέστε ακουστικά για μια καθηλωτική ηχητική εμπειρία.',
-          enterBtn: 'Είσοδος στη Γκαλερί',
+          enterBtn: 'ΕΙΣΟΔΟΣ',
           muteBtnTitle: 'Εναλλαγή Ήχου',
           rotationBtnTitle: 'Εναλλαγή Περιστροφής Ουρανού',
           languageBtnTitle: 'Switch to English'
@@ -456,6 +488,12 @@
         overlay.classList.add("hidden");
         setTimeout(() => { overlay.style.display = "none"; }, 1500);
         startAudio();
+      });
+
+      // Show enter button when scene is loaded
+      document.querySelector('a-scene').addEventListener('loaded', () => {
+        loadingIndicator.classList.add('hidden');
+        enterBtn.classList.add('visible');
       });
 
       // Handle sky texture errors
