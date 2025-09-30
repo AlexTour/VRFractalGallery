@@ -125,6 +125,12 @@
       margin-right: 10px;
       color: #00e5ff;
     }
+    #overlay #headphonesText {
+      font-size: 0.9em;
+      font-weight: 300;
+      color: rgba(255, 255, 255, 0.7);
+      margin-top: 15px;
+    }
     #overlay button {
       padding: 12px 24px;
       font-size: 1.2em;
@@ -191,9 +197,15 @@
         font-size: 1.8em;
         letter-spacing: 1px;
       }
-      #overlay p, #overlay li {
+      #overlay p {
         font-size: 1em;
         max-width: 90%;
+      }
+      #overlay li {
+        font-size: 1em;
+      }
+      #overlay #headphonesText {
+        font-size: 0.8em;
       }
       #overlay button {
         font-size: 1em;
@@ -227,18 +239,17 @@
     <div id="particles"></div>
     <h1 id="welcomeTitle">Welcome to Fractal Cosmos</h1>
     <p id="welcomeText">Dive into an immersive 360 gallery where fractals reveal order in chaos. Experience infinite landscapes that blend mathematics, art, and sound into a mesmerizing audiovisual journey.</p>
-    <strong id="howToExplore">How to Explore:</strong>
     <ul id="instructions">
       <li><span class="material-symbols-outlined">gesture</span><span id="rotateText">Rotate to look around the 360 environment.</span></li>
       <li><span class="material-symbols-outlined">ads_click</span><span id="selectText">Select thumbnail images to switch between fractal worlds.</span></li>
       <li><span class="material-symbols-outlined">volume_up</span><span id="muteText">Use the mute button (top right) to toggle audio on/off.</span></li>
       <li><span class="material-symbols-outlined">rotate_90_degrees_ccw</span><span id="rotationText">Use the rotation button (top right) to toggle sky rotation on/off.</span></li>
-      <li id="headphonesText">Wear headphones for an immersive soundscape.</li>
     </ul>
+    <p id="headphonesText">Wear headphones for an immersive soundscape.</p>
     <button id="enterBtn">Enter the Gallery</button>
   </div>
   <!-- Language Toggle Button -->
-  <button id="languageBtn" title="Toggle Language">ΕΛ</button>
+  <button id="languageBtn" title="Switch to Greek">ΕΛ</button>
   <!-- Mute/Unmute Button -->
   <button id="muteBtn" title="Toggle Audio">
     <span class="material-symbols-outlined">volume_up</span>
@@ -280,7 +291,7 @@
     </a-assets>
     <!-- Audio entity with sound component -->
     <a-entity id="background-audio" sound="src: #bgAudio; autoplay: false; loop: true; volume: 0"></a-entity>
-    <a-sky id="image-360" radius="10" src="#architect" material="magFilter: Linear; minFilter: Linear" animation="property: rotation; to: 0 360 0; dur: 180000; easing: linear; loop: true"></a-sky>
+    <a-sky id="image-360" radius="10" src="#architect" material="magFilter: Linear; minFilter: Linear" animation="property: rotation; to: 0 360 0; dur: 150000; easing: linear; loop: true"></a-sky>
     <a-entity id="links" position="0 -1 -3">
       <a-entity template="src: #link" data-src="#architect" data-thumb="#thumb-architect" position="-1.5 1 0"></a-entity>
       <a-entity template="src: #link" data-src="#architect2" data-thumb="#thumb-architect2" position="-0.75 1 0"></a-entity>
@@ -323,15 +334,13 @@
       const sky = document.getElementById("image-360");
       const particlesContainer = document.getElementById("particles");
       let isMuted = false;
-      let isRotating = true;
-      let currentLanguage = 'en';
+      let isRotating = true let currentLanguage = 'en';
 
       // Language translations
       const translations = {
         en: {
           welcomeTitle: 'Welcome to Fractal Cosmos',
           welcomeText: 'Dive into an immersive 360 gallery where fractals reveal order in chaos. Experience infinite landscapes that blend mathematics, art, and sound into a mesmerizing audiovisual journey.',
-          howToExplore: 'How to Explore:',
           rotateText: 'Rotate to look around the 360 environment.',
           selectText: 'Select thumbnail images to switch between fractal worlds.',
           muteText: 'Use the mute button (top right) to toggle audio on/off.',
@@ -345,7 +354,6 @@
         el: {
           welcomeTitle: 'Καλώς ήρθατε στο Fractal Cosmos',
           welcomeText: 'Βυθιστείτε σε μια καθηλωτική γκαλερί 360° όπου τα φράκταλ αποκαλύπτουν τάξη μέσα στο χάος. Ζήστε ατέλειωτα τοπία που συνδυάζουν μαθηματικά, τέχνη και ήχο σε ένα μαγευτικό οπτικοακουστικό ταξίδι.',
-          howToExplore: 'Πώς να Εξερευνήσετε:',
           rotateText: 'Περιστρέψτε για να κοιτάξετε γύρω σας στο περιβάλλον 360°.',
           selectText: 'Επιλέξτε μικρογραφίες εικόνων για να αλλάξετε μεταξύ φράκταλ κόσμων.',
           muteText: 'Χρησιμοποιήστε το κουμπί σίγασης (πάνω δεξιά) για να ενεργοποιήσετε/απενεργοποιήσετε τον ήχο.',
@@ -363,7 +371,6 @@
         currentLanguage = lang;
         document.getElementById('welcomeTitle').textContent = translations[lang].welcomeTitle;
         document.getElementById('welcomeText').textContent = translations[lang].welcomeText;
-        document.getElementById('howToExplore').textContent = translations[lang].howToExplore;
         document.getElementById('rotateText').textContent = translations[lang].rotateText;
         document.getElementById('selectText').textContent = translations[lang].selectText;
         document.getElementById('muteText').textContent = translations[lang].muteText;
@@ -426,7 +433,7 @@
           sky.setAttribute('animation', {
             property: 'rotation',
             to: '0 360 0',
-            dur: 180000,
+            dur: 150000,
             easing: 'linear',
             loop: true
           });
